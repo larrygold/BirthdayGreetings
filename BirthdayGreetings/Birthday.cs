@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BirthdayGreetings
 {
@@ -14,8 +15,11 @@ namespace BirthdayGreetings
         }
         public void Process()
         {
-            _repo.GetListOfFriends();
-            _sender.Send(new List<string>());
+            var birthdayPeople = _repo.GetListOfFriends();
+            foreach (var birthdayPerson in birthdayPeople)
+            {
+                _sender.Send(birthdayPerson);
+            }
         }
     }
 
@@ -26,7 +30,7 @@ namespace BirthdayGreetings
 
     public interface ISenderService
     {
-        public void Send(List<string> emails);
+        public void Send(Friend friend);
     }
 
     public class Friend

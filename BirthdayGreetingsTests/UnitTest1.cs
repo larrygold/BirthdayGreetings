@@ -19,26 +19,34 @@ namespace BirthdayGreetingsTests
             var mockRepo = new Mock<IRepository>();
             var mockSenderService = new Mock<ISenderService>();
 
+            var john = new Friend()
+            {
+                LastName = "Doe",
+                FirstName = "John",
+                BirthDate = DateTime.Parse("2021/09/24"),
+                Email = "john.doe@foobar.com"
+            };
+
+            var mary = new Friend()
+            {
+                LastName = "Ann",
+                FirstName = "Mary",
+                BirthDate = DateTime.Parse("2021/09/24"),
+                Email = "mary.ann@foobar.com"
+            };
+
             mockRepo.Setup(x => x.GetListOfFriends())
                 .Returns(new List<Friend>()
                 {
-                    new Friend()
-                    {
-                        LastName = "Doe", FirstName = "John",
-                        BirthDate = DateTime.Parse("1982/10/08"), Email = "john.doe@foobar.com"
-                    },
-                    new Friend()
-                    {
-                        LastName = "Ann", FirstName = "Mary",
-                        BirthDate = DateTime.Parse("1975/09/11"), Email = "mary.ann@foobar.com"
-                    }
+                    john ,
+                    mary
                 });
 
             new Birthday(mockRepo.Object, mockSenderService.Object).Process();
 
             mockRepo.Verify(x => x.GetListOfFriends(), Times.Once);
-            mockSenderService.Verify(x => x.Send(It.IsAny<List<string>>()), Times.Once);
-
+            mockSenderService.Verify(x => x.Send(john), Times.Once);
+            mockSenderService.Verify(x => x.Send(mary), Times.Once);
         }
     }
 }
