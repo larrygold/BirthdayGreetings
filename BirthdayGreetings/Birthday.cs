@@ -18,7 +18,14 @@ namespace BirthdayGreetings
             var birthdayPeople = _repo.GetListOfFriends();
             foreach (var birthdayPerson in birthdayPeople)
             {
-                _sender.Send(birthdayPerson);
+                if (
+                    (birthdayPerson.BirthDate.Day == DateTime.Today.Day)
+                    &&
+                    (birthdayPerson.BirthDate.Month == DateTime.Today.Month)
+                )
+                {
+                    _sender.Send(birthdayPerson);
+                }
             }
         }
     }
