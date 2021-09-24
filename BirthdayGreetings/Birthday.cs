@@ -35,9 +35,41 @@ namespace BirthdayGreetings
         public List<Friend> GetListOfFriends();
     }
 
+    public class TextRepository : IRepository
+    {
+        private ITextFile _textFile;
+        public TextRepository(ITextFile textFile)
+        {
+            _textFile = textFile;
+        }
+        public List<Friend> GetListOfFriends()
+        {
+            var friendsObjects = new List<Friend>();
+            var friends = _textFile.GetRawText().Split("\n");
+            foreach (var friend in friends)
+            {
+                var aFriendData = friend.Split(", ");
+                var aFriend = new Friend()
+                {
+                    FirstName = aFriendData[1],
+                    LastName = aFriendData[0],
+                    BirthDate = DateTime.Parse(aFriendData[2]),
+                    Email = aFriendData[3]
+                };
+                friendsObjects.Add(aFriend);
+            }
+            return friendsObjects;
+        }
+    }
+
     public interface ISenderService
     {
         public void Send(Friend friend);
+    }
+
+    public interface ITextFile
+    {
+        public string GetRawText();
     }
 
     public class Friend
@@ -46,6 +78,10 @@ namespace BirthdayGreetings
         internal string LastName { get; set; }
         internal DateTime BirthDate { get; set; }
         internal string Email { get; set; }
-
+        public override bool Equals(object otherFriend)
+        {
+            var otherFriendAsFriend = (Friend) otherFriend;
+            return ((FirstName == otherFriendAsFriend.FirstName) && (LastName == otherFriendAsFriend.LastName));
+        }
     }
 }

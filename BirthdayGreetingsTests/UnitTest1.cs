@@ -84,5 +84,34 @@ namespace BirthdayGreetingsTests
             mockSenderService.Verify(x => x.Send(It.IsAny<Friend>()), Times.Once);
             mockSenderService.Verify(x => x.Send(john), Times.Once);
         }
+
+        [Test]
+        public void Should_ParseTestDB_When_GetAllIsCalled()
+        {
+            var mockTextFile = new Mock<ITextFile>();
+            mockTextFile.Setup(x => x.GetRawText())
+                .Returns("Doe, John, 2021/09/24, john.doe@foobar.com\nAnn, Mary, 1994/08/21, mary.ann@foobar.com");
+
+            var john = new Friend()
+            {
+                LastName = "Doe",
+                FirstName = "John",
+                BirthDate = DateTime.Parse("2021/09/24"),
+                Email = "john.doe@foobar.com"
+            };
+
+            var mary = new Friend()
+            {
+                LastName = "Ann",
+                FirstName = "Mary",
+                BirthDate = DateTime.Parse("1994/08/21"),
+                Email = "mary.ann@foobar.com"
+            };
+
+            var actual = new TextRepository(mockTextFile.Object).GetListOfFriends();
+            var expected = new List<Friend>() {john, mary};
+            CollectionAssert.AreEqual(expected, actual);
+
+        }
     }
 }
